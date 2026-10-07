@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Snake con Caritas - 80 y 90 Radio</title>
+    <title>Nokia Snake</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
         
@@ -153,8 +153,6 @@
         <button class="key-button key-4" onclick="handleKey('4')" title="Izquierda"></button>
         <button class="key-button key-6" onclick="handleKey('6')" title="Derecha"></button>
         <button class="key-button key-8" onclick="handleKey('8')" title="Abajo"></button>
-
-        <!-- ✅ ELIMINADO: El div .controls-hint ya no existe -->
     </div>
 
     <script>
@@ -313,10 +311,11 @@
 
         function updateScore() { }
 
+        // ✅ Texto de compartir actualizado
         function shareScore() {
             playSound('ui');
-            const text = `¡Jugué Snake en 80 y 90 Radio y conseguí ${score} puntos! \uD83D\uDCF1`;
-            if (navigator.share) { navigator.share({ title: 'Snake - 80 y 90 Radio', text: text, url: window.location.href }); } 
+            const text = `¡Jugué a Snake en un Nokia y conseguí ${score} puntos! \uD83D\uDCF1`;
+            if (navigator.share) { navigator.share({ title: 'Nokia Snake', text: text, url: window.location.href }); } 
             else { navigator.clipboard.writeText(text + ' ' + window.location.href); alert('¡Texto copiado!'); }
         }
 
