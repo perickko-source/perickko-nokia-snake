@@ -2,7 +2,8 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- ✅ CAMBIO AQUI: maximum-scale=1.0 y user-scalable=no desactivan el zoom -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Nokia Snake</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
@@ -15,6 +16,8 @@
             align-items: center;
             height: 100vh;
             overflow: hidden;
+            /* Evita el zoom por doble toque en algunos navegadores móviles */
+            touch-action: manipulation; 
         }
 
         .nokia-container {
@@ -63,6 +66,8 @@
             opacity: 0;
             z-index: 10;
             transition: opacity 0.1s;
+            /* Evita el zoom por doble toque en los botones */
+            touch-action: manipulation;
         }
 
         .key-button:hover, .key-button:active {
@@ -109,6 +114,7 @@
             font-size: 9px;
             transition: all 0.2s;
             z-index: 30;
+            touch-action: manipulation;
         }
 
         .btn:hover { background: #9ead86; color: #2d3a1f; }
@@ -311,7 +317,6 @@
 
         function updateScore() { }
 
-        // ✅ Texto de compartir actualizado
         function shareScore() {
             playSound('ui');
             const text = `¡Jugué a Snake en un Nokia y conseguí ${score} puntos! \uD83D\uDCF1`;
