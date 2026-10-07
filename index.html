@@ -12,20 +12,20 @@
             background: #373e50;
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start; /* ✅ CAMBIO: de center a flex-start */
             height: 100vh;
             overflow: hidden;
             touch-action: manipulation; 
+            padding-top: 10px; /* ✅ Pequeño margen superior */
         }
 
         .nokia-container {
             position: relative;
             width: 360px;
             height: 720px;
-            transform-origin: center center;
+            transform-origin: top center; /* ✅ CAMBIO: de center center a top center */
         }
 
-        /* Caja verde con marco (Centra el canvas de 200x147) */
         .game-layer {
             position: absolute;
             top: 174px; 
@@ -45,7 +45,6 @@
             background: #9ead86;
         }
 
-        /* ✅ CAMBIO: background-position: top center para que el skin se pegue arriba */
         .skin-overlay {
             position: absolute;
             top: 0; left: 0;
@@ -53,7 +52,7 @@
             background-image: url('nokia-skin.png');
             background-size: contain;
             background-repeat: no-repeat;
-            background-position: top center;  /* ✅ Pegado arriba */
+            background-position: top center;
             z-index: 2;
             pointer-events: none;
         }
@@ -75,7 +74,6 @@
             border-radius: 50%;
         }
 
-        /* Coordenadas actualizadas */
         .key-c { top: 392px; left: 80px; width: 40px; height: 35px; }
         .key-center { top: 368px; left: 135px; width: 80px; height: 34px; }
         .key-2 { top: 472px; left: 147px; width: 60px; height: 38px; }
@@ -160,12 +158,10 @@
         <button class="key-button key-4" onclick="handleKey('4')" title="Izquierda"></button>
         <button class="key-button key-6" onclick="handleKey('6')" title="Derecha"></button>
         <button class="key-button key-8" onclick="handleKey('8')" title="Abajo"></button>
-        <!-- Botón de la Radio -->
         <button class="key-button key-radio" onclick="toggleRadio()" title="80 y 90 Radio"></button>
     </div>
 
     <script>
-        // Escalado para ocupar toda la pantalla
         function scaleNokia() {
             const container = document.getElementById('nokiaContainer');
             const baseHeight = 720;
@@ -176,7 +172,6 @@
         window.addEventListener('load', scaleNokia);
         window.addEventListener('resize', scaleNokia);
 
-        // 🔊 SISTEMA DE SONIDO RETRO (Efectos del juego)
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         
         function playSound(type) {
@@ -210,7 +205,6 @@
             }
         }
 
-        //  STREAM DE RADIO 80 y 90
         const radioStream = new Audio('https://stream.zeno.fm/ndhkmuknva0uv');
         radioStream.preload = 'none';
         let isRadioPlaying = false;
@@ -225,7 +219,6 @@
             }
         }
 
-        // Lógica del Juego
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         const gridSize = 8;
