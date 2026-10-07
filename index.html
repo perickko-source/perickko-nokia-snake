@@ -45,6 +45,7 @@
             background: #9ead86;
         }
 
+        /* ✅ CAMBIO: background-position: top center para que el skin se pegue arriba */
         .skin-overlay {
             position: absolute;
             top: 0; left: 0;
@@ -52,7 +53,7 @@
             background-image: url('nokia-skin.png');
             background-size: contain;
             background-repeat: no-repeat;
-            background-position: center;
+            background-position: top center;  /* ✅ Pegado arriba */
             z-index: 2;
             pointer-events: none;
         }
@@ -175,7 +176,7 @@
         window.addEventListener('load', scaleNokia);
         window.addEventListener('resize', scaleNokia);
 
-        //  SISTEMA DE SONIDO RETRO (Efectos del juego)
+        // 🔊 SISTEMA DE SONIDO RETRO (Efectos del juego)
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         
         function playSound(type) {
