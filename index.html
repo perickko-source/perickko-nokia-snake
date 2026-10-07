@@ -6,74 +6,124 @@
     <title>Snake con Caritas - 80 y 90 Radio</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
+        
         body {
             font-family: 'Courier New', monospace;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex; justify-content: center; align-items: center;
-            min-height: 100vh; padding: 20px;
+            background: #373e50;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
         }
-        .nokia-container { position: relative; width: 360px; height: 720px; }
+
+        .nokia-container {
+            position: relative;
+            width: 360px;
+            height: 720px;
+            transform-origin: center center;
+        }
+
         .game-layer {
-            position: absolute; top: 201px; left: 58px; width: 240px; height: 182px;
-            z-index: 1; background: #9ead86;
-            display: flex; justify-content: center; align-items: center;
+            position: absolute;
+            top: 201px;
+            left: 58px;
+            width: 240px;
+            height: 182px;
+            z-index: 1;
+            background: #9ead86;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
-        #gameCanvas { display: block; image-rendering: pixelated; background: #9ead86; }
+
+        #gameCanvas {
+            display: block;
+            image-rendering: pixelated;
+            background: #9ead86;
+        }
+
         .skin-overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             background-image: url('nokia-skin.png');
-            background-size: contain; background-repeat: no-repeat; background-position: center;
-            z-index: 2; pointer-events: none;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            z-index: 2;
+            pointer-events: none;
         }
+
         .key-button {
-            position: absolute; background: transparent; border: none; cursor: pointer;
-            opacity: 0; z-index: 10; transition: opacity 0.1s;
+            position: absolute;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            opacity: 0;
+            z-index: 10;
+            transition: opacity 0.1s;
         }
-        .key-button:hover, .key-button:active { opacity: 0.2; background: #fff; border-radius: 50%; }
-        .key-c { top: 365px; left: 95px; width: 40px; height: 35px; }
-        .key-center { top: 360px; left: 150px; width: 50px; height: 40px; }
-        .key-up { top: 350px; left: 215px; width: 35px; height: 30px; }
-        .key-down { top: 385px; left: 215px; width: 35px; height: 30px; }
-        .key-left { top: 367px; left: 175px; width: 35px; height: 30px; }
-        .key-right { top: 367px; left: 255px; width: 35px; height: 30px; }
-        .key-2 { top: 440px; left: 145px; width: 60px; height: 45px; }
-        .key-4 { top: 490px; left: 50px; width: 60px; height: 45px; }
-        .key-6 { top: 490px; left: 240px; width: 60px; height: 45px; }
-        .key-8 { top: 540px; left: 145px; width: 60px; height: 45px; }
+
+        .key-button:hover, .key-button:active {
+            opacity: 0.2;
+            background: #fff;
+            border-radius: 50%;
+        }
+
+        .key-c { top: 418px; left: 78px; width: 45px; height: 35px; }
+        .key-center { top: 394px; left: 138px; width: 80px; height: 35px; }
+        .key-2 { top: 498px; left: 148px; width: 60px; height: 36px; }
+        .key-4 { top: 535px; left: 65px; width: 60px; height: 39px; }
+        .key-6 { top: 534px; left: 232px; width: 60px; height: 41px; }
+        .key-8 { top: 597px; left: 148px; width: 62px; height: 35px; }
 
         .overlay-screen {
-            position: absolute; top: 20px; left: 20px; width: 200px; height: 142px;
-            background: #9ead86; display: flex; flex-direction: column;
-            justify-content: center; align-items: center; padding: 5px;
-            text-align: center; z-index: 20;
+            position: absolute;
+            top: 20px; left: 20px;
+            width: 200px; height: 142px;
+            background: #9ead86;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 5px;
+            text-align: center;
+            z-index: 20;
         }
+
         .overlay-screen h1 { font-size: 13px; margin-bottom: 4px; color: #2d3a1f; }
         .overlay-screen h2 { font-size: 11px; margin-bottom: 4px; color: #2d3a1f; }
         .overlay-screen p { font-size: 8px; margin: 2px 0; color: #2d3a1f; line-height: 1.2; }
+
         .btn {
-            background: #2d3a1f; color: #9ead86; border: 1px solid #2d3a1f;
-            padding: 4px 8px; margin: 2px; border-radius: 3px; cursor: pointer;
-            font-family: 'Courier New', monospace; font-weight: bold; font-size: 9px;
-            transition: all 0.2s; z-index: 30;
+            background: #2d3a1f;
+            color: #9ead86;
+            border: 1px solid #2d3a1f;
+            padding: 4px 8px;
+            margin: 2px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            font-size: 9px;
+            transition: all 0.2s;
+            z-index: 30;
         }
+
         .btn:hover { background: #9ead86; color: #2d3a1f; }
         .hidden { display: none !important; }
-        .controls-hint {
-            position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
-            background: rgba(0,0,0,0.7); color: #fff; padding: 4px 8px; border-radius: 8px;
-            font-size: 8px; text-align: center; z-index: 4; pointer-events: none; white-space: nowrap;
-        }
     </style>
 </head>
 <body>
-    <div class="nokia-container">
+    <div class="nokia-container" id="nokiaContainer">
         <div class="game-layer">
             <canvas id="gameCanvas" width="200" height="142"></canvas>
 
             <div id="menuScreen" class="overlay-screen">
                 <h1>&#x1F40D; SNAKE</h1>
-                <p>&#xA1;Come caritas, evita el diablo!</p>
-                <p>&#x1F600;+10 &#x1F601;+15 &#x1F60D;+20<br>&#x1F929;+25 &#x1F973;+30 &#x1F608;-10<br>&#x1F911;+50 &#x1F92A;+40</p>
+                <p>&#xA1;Come todas las caritas!</p>
+                <p>&#x1F600;+10 &#x1F601;+15 &#x1F60D;+20<br>&#x1F929;+25 &#x1F973;+30 &#x1F608;+5<br>&#x1F911;+50 &#x1F92A;+40</p>
                 <button class="btn" onclick="startGame()">&#x25B6; Jugar</button>
                 <button class="btn" onclick="showRanking()">&#x1F3C6; Ranking</button>
             </div>
@@ -99,20 +149,25 @@
 
         <button class="key-button key-c" onclick="handleKey('c')" title="Men&#xFA; (C)"></button>
         <button class="key-button key-center" onclick="handleKey('5')" title="Start/Pausa"></button>
-        <button class="key-button key-up" onclick="handleKey('2')" title="Arriba"></button>
-        <button class="key-button key-down" onclick="handleKey('8')" title="Abajo"></button>
-        <button class="key-button key-left" onclick="handleKey('4')" title="Izquierda"></button>
-        <button class="key-button key-right" onclick="handleKey('6')" title="Derecha"></button>
         <button class="key-button key-2" onclick="handleKey('2')" title="Arriba"></button>
         <button class="key-button key-4" onclick="handleKey('4')" title="Izquierda"></button>
         <button class="key-button key-6" onclick="handleKey('6')" title="Derecha"></button>
         <button class="key-button key-8" onclick="handleKey('8')" title="Abajo"></button>
 
-        <div class="controls-hint">Usa las teclas del Nokia o &#x2190;&#x2191;&#x2193;&#x2192;</div>
+        <!-- ✅ ELIMINADO: El div .controls-hint ya no existe -->
     </div>
 
     <script>
-        //  SISTEMA DE SONIDO RETRO (Web Audio API)
+        function scaleNokia() {
+            const container = document.getElementById('nokiaContainer');
+            const baseHeight = 720;
+            const availableHeight = window.innerHeight;
+            const scale = availableHeight / baseHeight;
+            container.style.transform = `scale(${scale})`;
+        }
+        window.addEventListener('load', scaleNokia);
+        window.addEventListener('resize', scaleNokia);
+
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         
         function playSound(type) {
@@ -124,7 +179,6 @@
             const now = audioCtx.currentTime;
 
             if (type === 'eat') {
-                // Sonido agudo y alegre al comer
                 osc.type = 'square';
                 osc.frequency.setValueAtTime(600, now);
                 osc.frequency.exponentialRampToValueAtTime(1200, now + 0.1);
@@ -132,7 +186,6 @@
                 gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
                 osc.start(now); osc.stop(now + 0.1);
             } else if (type === 'die') {
-                // Sonido grave y descendente al morir
                 osc.type = 'sawtooth';
                 osc.frequency.setValueAtTime(300, now);
                 osc.frequency.exponentialRampToValueAtTime(50, now + 0.4);
@@ -140,7 +193,6 @@
                 gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
                 osc.start(now); osc.stop(now + 0.4);
             } else if (type === 'ui') {
-                // Clic corto para menús
                 osc.type = 'square';
                 osc.frequency.setValueAtTime(800, now);
                 gain.gain.setValueAtTime(0.05, now);
@@ -163,7 +215,7 @@
             { emoji: '\uD83D\uDE0D', points: 20, probability: 0.15 },
             { emoji: '\uD83E\uDD29', points: 25, probability: 0.10 },
             { emoji: '\uD83E\uDD73', points: 30, probability: 0.05 },
-            { emoji: '\uD83D\uDE08', points: -10, probability: 0.05 },
+            { emoji: '\uD83D\uDE08', points: 5, probability: 0.05 },
             { emoji: '\uD83E\uDD11', points: 50, probability: 0.03 },
             { emoji: '\uD83E\uDD2A', points: 40, probability: 0.02 }
         ];
@@ -208,7 +260,7 @@
 
             if (head.x === food.x && head.y === food.y) {
                 score += food.points; foodEaten++; if (score < 0) score = 0; updateScore(); placeFood();
-                playSound('eat'); // 🔊 Sonido al comer
+                playSound('eat');
                 if (score > 0 && score % 50 === 0 && gameSpeed > 60) { gameSpeed -= 10; clearInterval(gameLoop); gameLoop = setInterval(gameStep, gameSpeed); }
             } else { snake.pop(); }
             drawGame();
@@ -217,7 +269,7 @@
         function gameStep() { updateGame(); }
 
         function startGame() {
-            playSound('ui'); // 🔊 Sonido al iniciar
+            playSound('ui');
             document.getElementById('menuScreen').classList.add('hidden');
             document.getElementById('gameOverScreen').classList.add('hidden');
             document.getElementById('rankingScreen').classList.add('hidden');
@@ -226,7 +278,7 @@
         }
 
         function gameOver() {
-            playSound('die'); // 🔊 Sonido al perder
+            playSound('die');
             clearInterval(gameLoop); gameLoop = null;
             document.getElementById('finalScore').textContent = score;
             document.getElementById('finalLength').textContent = snake.length;
@@ -259,7 +311,7 @@
             scores.push({ score: newScore, date: dateStr }); localStorage.setItem('snakeScores_80y90', JSON.stringify(scores));
         }
 
-        function updateScore() { /* Se mantiene por compatibilidad */ }
+        function updateScore() { }
 
         function shareScore() {
             playSound('ui');
