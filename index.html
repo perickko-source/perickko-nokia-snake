@@ -12,18 +12,18 @@
             background: #373e50;
             display: flex;
             justify-content: center;
-            align-items: flex-start; /* ✅ CAMBIO: de center a flex-start */
+            align-items: flex-start;
             height: 100vh;
             overflow: hidden;
             touch-action: manipulation; 
-            padding-top: 10px; /* ✅ Pequeño margen superior */
+            padding-top: 10px;
         }
 
         .nokia-container {
             position: relative;
             width: 360px;
             height: 720px;
-            transform-origin: top center; /* ✅ CAMBIO: de center center a top center */
+            transform-origin: top center;
         }
 
         .game-layer {
@@ -118,6 +118,33 @@
 
         .btn:hover { background: #9ead86; color: #2d3a1f; }
         .hidden { display: none !important; }
+
+        .speed-selector {
+            position: absolute;
+            top: 17px; left: 20px;
+            width: 200px; height: 147px;
+            background: #9ead86;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 5px;
+            text-align: center;
+            z-index: 20;
+        }
+
+        .speed-selector h2 {
+            font-size: 11px;
+            margin-bottom: 8px;
+            color: #2d3a1f;
+        }
+
+        .speed-option {
+            font-size: 10px;
+            margin: 3px 0;
+            color: #2d3a1f;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -129,8 +156,15 @@
                 <h1>&#x1F40D; SNAKE</h1>
                 <p>&#xA1;Come todas las caritas!</p>
                 <p>&#x1F600;+10 &#x1F601;+15 &#x1F60D;+20<br>&#x1F929;+25 &#x1F973;+30 &#x1F608;+5<br>&#x1F911;+50 &#x1F92A;+40</p>
-                <button class="btn" onclick="startGame()">&#x25B6; Jugar</button>
+                <button class="btn" onclick="showSpeedSelector()">&#x25B6; Jugar</button>
                 <button class="btn" onclick="showRanking()">&#x1F3C6; Ranking</button>
+            </div>
+
+            <div id="speedScreen" class="speed-selector hidden">
+                <h2>ELIGE VELOCIDAD:</h2>
+                <div class="speed-option" id="speed-slow"><span id="cursor-slow">  </span> &#x1F422; Lento</div>
+                <div class="speed-option" id="speed-normal"><span id="cursor-normal">  </span> &#x1F407; Normal</div>
+                <div class="speed-option" id="speed-fast"><span id="cursor-fast">  </span> &#x1F680; R&#xE1;pido</div>
             </div>
 
             <div id="gameOverScreen" class="overlay-screen hidden">
@@ -138,7 +172,7 @@
                 <p>Puntos: <span id="finalScore">0</span></p>
                 <p>&#x1F40D; Long: <span id="finalLength">0</span></p>
                 <p>&#x1F34E; Comida: <span id="finalFood">0</span></p>
-                <button class="btn" onclick="startGame()">&#x1F504; Otra Vez</button>
+                <button class="btn" onclick="showSpeedSelector()">&#x1F504; Otra Vez</button>
                 <button class="btn" onclick="showMenu()">&#x1F3E0; Men&#xFA;</button>
                 <button class="btn" onclick="shareScore()">&#x1F4E4; Compartir</button>
             </div>
@@ -227,6 +261,9 @@
 
         let snake = [], food = {}, dx = 0, dy = 0, score = 0, gameLoop = null, gameSpeed = 150, foodEaten = 0;
 
+        let selectedSpeed = 1;
+        const speeds = [200, 150, 100];
+
         const foodTypes = [
             { emoji: '\uD83D\uDE00', points: 10, probability: 0.40 },
             { emoji: '\uD83D\uDE01', points: 15, probability: 0.20 },
@@ -259,11 +296,50 @@
         }
 
         function drawGame() {
-            ctx.fillStyle = '#9ead86'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#9ead86';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
             ctx.fillStyle = '#2d3a1f';
-            for (let segment of snake) ctx.fillRect(segment.x * gridSize, segment.y * gridSize, gridSize - 1, gridSize - 1);
-            ctx.font = '7px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+            for (let i = 0; i < snake.length; i++) {
+                const segment = snake[i];
+                ctx.fillRect(segment.x * gridSize, segment.y * gridSize, gridSize - 1, gridSize - 1);
+                
+                if (i === 0) {
+                    drawSimpleEyes(segment.x * gridSize, segment.y * gridSize);
+                }
+            }
+
+            ctx.font = '7px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
             ctx.fillText(food.emoji, food.x * gridSize + gridSize / 2, food.y * gridSize + gridSize / 2 + 1);
+        }
+
+        // ✅ FUNCIÓN CORREGIDA: Ojitos minimalistas con restauración de color
+        function drawSimpleEyes(x, y) {
+            ctx.fillStyle = '#ffffff';
+            
+            let eye1X, eye1Y, eye2X, eye2Y;
+
+            if (dx === 1) { // Derecha
+                eye1X = x + 5; eye1Y = y + 2;
+                eye2X = x + 5; eye2Y = y + 5;
+            } else if (dx === -1) { // Izquierda
+                eye1X = x + 2; eye1Y = y + 2;
+                eye2X = x + 2; eye2Y = y + 5;
+            } else if (dy === -1) { // Arriba
+                eye1X = x + 2; eye1Y = y + 2;
+                eye2X = x + 5; eye2Y = y + 2;
+            } else { // Abajo (o quieto)
+                eye1X = x + 2; eye1Y = y + 5;
+                eye2X = x + 5; eye2Y = y + 5;
+            }
+
+            ctx.fillRect(eye1X, eye1Y, 1, 1);
+            ctx.fillRect(eye2X, eye2Y, 1, 1);
+            
+            // ✅ RESTAURAR el color original de la serpiente
+            ctx.fillStyle = '#2d3a1f';
         }
 
         function updateGame() {
@@ -286,13 +362,42 @@
 
         function gameStep() { updateGame(); }
 
+        function showSpeedSelector() {
+            playSound('ui');
+            document.getElementById('menuScreen').classList.add('hidden');
+            document.getElementById('gameOverScreen').classList.add('hidden');
+            document.getElementById('rankingScreen').classList.add('hidden');
+            document.getElementById('speedScreen').classList.remove('hidden');
+            selectedSpeed = 1;
+            updateSpeedCursor();
+        }
+
+        function updateSpeedCursor() {
+            document.getElementById('cursor-slow').textContent = selectedSpeed === 0 ? '> ' : '  ';
+            document.getElementById('cursor-normal').textContent = selectedSpeed === 1 ? '> ' : '  ';
+            document.getElementById('cursor-fast').textContent = selectedSpeed === 2 ? '> ' : '  ';
+        }
+
+        function confirmSpeed() {
+            playSound('ui');
+            gameSpeed = speeds[selectedSpeed];
+            document.getElementById('speedScreen').classList.add('hidden');
+            initGame();
+            drawGame();
+            if (gameLoop) clearInterval(gameLoop);
+            gameLoop = setInterval(gameStep, gameSpeed);
+        }
+
         function startGame() {
             playSound('ui');
             document.getElementById('menuScreen').classList.add('hidden');
             document.getElementById('gameOverScreen').classList.add('hidden');
             document.getElementById('rankingScreen').classList.add('hidden');
-            gameSpeed = 150; initGame(); drawGame();
-            if (gameLoop) clearInterval(gameLoop); gameLoop = setInterval(gameStep, gameSpeed);
+            gameSpeed = 150;
+            initGame();
+            drawGame();
+            if (gameLoop) clearInterval(gameLoop);
+            gameLoop = setInterval(gameStep, gameSpeed);
         }
 
         function gameOver() {
@@ -301,15 +406,18 @@
             document.getElementById('finalScore').textContent = score;
             document.getElementById('finalLength').textContent = snake.length;
             document.getElementById('finalFood').textContent = foodEaten;
-            document.getElementById('gameOverScreen').classList.remove('hidden'); saveScore(score);
+            document.getElementById('gameOverScreen').classList.remove('hidden');
+            saveScore(score);
         }
 
         function showMenu() {
             playSound('ui');
             document.getElementById('gameOverScreen').classList.add('hidden');
             document.getElementById('rankingScreen').classList.add('hidden');
+            document.getElementById('speedScreen').classList.add('hidden');
             document.getElementById('menuScreen').classList.remove('hidden');
-            if (gameLoop) { clearInterval(gameLoop); gameLoop = null; } drawGame();
+            if (gameLoop) { clearInterval(gameLoop); gameLoop = null; }
+            drawGame();
         }
 
         function showRanking() {
@@ -325,8 +433,10 @@
         function saveScore(newScore) {
             if (newScore === 0) return;
             const scores = JSON.parse(localStorage.getItem('snakeScores_80y90') || '[]');
-            const now = new Date(); const dateStr = `${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()}`;
-            scores.push({ score: newScore, date: dateStr }); localStorage.setItem('snakeScores_80y90', JSON.stringify(scores));
+            const now = new Date();
+            const dateStr = `${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()}`;
+            scores.push({ score: newScore, date: dateStr });
+            localStorage.setItem('snakeScores_80y90', JSON.stringify(scores));
         }
 
         function updateScore() { }
@@ -339,11 +449,36 @@
         }
 
         function handleKey(key) {
-            if (key === 'c' || key === 'C') { showMenu(); return; }
+            if (key === 'c' || key === 'C') {
+                showMenu();
+                return;
+            }
+
             const inMenu = !document.getElementById('menuScreen').classList.contains('hidden');
+            const inSpeed = !document.getElementById('speedScreen').classList.contains('hidden');
             const inGameOver = !document.getElementById('gameOverScreen').classList.contains('hidden');
             const inRanking = !document.getElementById('rankingScreen').classList.contains('hidden');
-            if (inMenu || inGameOver || inRanking) { if (key === '5') startGame(); return; }
+
+            if (inSpeed) {
+                if (key === '2') {
+                    selectedSpeed = Math.max(0, selectedSpeed - 1);
+                    updateSpeedCursor();
+                    playSound('ui');
+                } else if (key === '8') {
+                    selectedSpeed = Math.min(2, selectedSpeed + 1);
+                    updateSpeedCursor();
+                    playSound('ui');
+                } else if (key === '5') {
+                    confirmSpeed();
+                }
+                return;
+            }
+
+            if (inMenu || inGameOver || inRanking) {
+                if (key === '5') startGame();
+                return;
+            }
+
             switch(key) {
                 case '2': if (dy !== 1) { dx = 0; dy = -1; } break;
                 case '8': if (dy !== -1) { dx = 0; dy = 1; } break;
