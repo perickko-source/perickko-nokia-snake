@@ -154,7 +154,6 @@
                 <h2>ELIGE VELOCIDAD:</h2>
                 <div class="speed-option" id="speed-slow"><span id="cursor-slow">  </span> &#x1F422; Lento</div>
                 <div class="speed-option" id="speed-normal"><span id="cursor-normal">  </span> &#x1F407; Normal</div>
-                <!-- ✅ EMOJI COHETE RECUPERADO -->
                 <div class="speed-option" id="speed-fast"><span id="cursor-fast">  </span> &#x1F680; Rápido</div>
             </div>
 
@@ -825,14 +824,45 @@
             else { navigator.clipboard.writeText(text + ' ' + window.location.href); alert('¡Texto copiado!'); }
         }
 
+        // ✅ FUNCIÓN HANDLEKEY REORDENADA: Primero comprueba el juego activo, luego los menús
         function handleKey(key) {
             if (key === 'c' || key === 'C') { showMainMenu(); return; }
 
+            // ✅ PRIMERO: Si hay un juego activo, procesar sus controles
+            if (currentGame === 'snake') {
+                const inGameOver = !document.getElementById('gameOverScreen').classList.contains('hidden');
+                if (inGameOver) {
+                    if (key === 'blue' || key === '5' || key === 'Enter' || key === ' ' || key === '3') { showSpeedSelector(); }
+                    return;
+                }
+                
+                switch(key) {
+                    case '2': case 'ArrowUp': if (dy !== 1) { dx = 0; dy = -1; } break;
+                    case '8': case 'ArrowDown': if (dy !== -1) { dx = 0; dy = 1; } break;
+                    case '4': case 'ArrowLeft': if (dx !== 1) { dx = -1; dy = 0; } break;
+                    case '6': case 'ArrowRight': if (dx !== -1) { dx = 1; dy = 0; } break;
+                    case 'blue': case '5': case ' ': if (gameLoop) { clearInterval(gameLoop); gameLoop = null; } else { gameLoop = setInterval(gameStepSnake, gameSpeed); } break;
+                }
+                return;
+            } else if (currentGame === 'si') {
+                const inSIGameOver = !document.getElementById('siGameOverScreen').classList.contains('hidden');
+                if (inSIGameOver) {
+                    if (key === 'blue' || key === '5' || key === 'Enter' || key === ' ' || key === '3') { startSI(); }
+                    return;
+                }
+                
+                switch(key) {
+                    case '4': case 'ArrowLeft': siKeysPressed.left = true; break;
+                    case '5': case '6': case 'ArrowRight': siKeysPressed.right = true; break;
+                    case '3': case 'ArrowUp': case ' ': shootSI(); break;
+                }
+                return;
+            }
+
+            // ✅ SEGUNDO: Si no hay juego activo, procesar menús
             const inMainMenu = !document.getElementById('mainMenuScreen').classList.contains('hidden');
             const inMenu = !document.getElementById('menuScreen').classList.contains('hidden');
             const inSpeed = !document.getElementById('speedScreen').classList.contains('hidden');
-            const inGameOver = !document.getElementById('gameOverScreen').classList.contains('hidden');
-            const inSIGameOver = !document.getElementById('siGameOverScreen').classList.contains('hidden'); 
             const inRanking = !document.getElementById('rankingScreen').classList.contains('hidden');
 
             if (inMainMenu) {
@@ -849,32 +879,11 @@
                 return;
             }
 
-            if (inSIGameOver) {
-                if (key === 'blue' || key === '5' || key === 'Enter' || key === ' ' || key === '3') { startSI(); }
-                return;
-            }
-
-            if (inMenu || inGameOver || inRanking) {
+            if (inMenu || inRanking) {
                 if (key === 'blue' || key === '5' || key === 'Enter' || key === ' ' || key === '3') {
-                    if (inMenu) showSpeedSelector(); else if (inGameOver) showSpeedSelector(); else if (inRanking) showMenu();
+                    if (inMenu) showSpeedSelector(); else if (inRanking) showMenu();
                 }
                 return;
-            }
-
-            if (currentGame === 'snake') {
-                switch(key) {
-                    case '2': case 'ArrowUp': if (dy !== 1) { dx = 0; dy = -1; } break;
-                    case '8': case 'ArrowDown': if (dy !== -1) { dx = 0; dy = 1; } break;
-                    case '4': case 'ArrowLeft': if (dx !== 1) { dx = -1; dy = 0; } break;
-                    case '6': case 'ArrowRight': if (dx !== -1) { dx = 1; dy = 0; } break;
-                    case 'blue': case '5': case ' ': if (gameLoop) { clearInterval(gameLoop); gameLoop = null; } else { gameLoop = setInterval(gameStepSnake, gameSpeed); } break;
-                }
-            } else if (currentGame === 'si') {
-                switch(key) {
-                    case '4': case 'ArrowLeft': siKeysPressed.left = true; break;
-                    case '5': case '6': case 'ArrowRight': siKeysPressed.right = true; break;
-                    case '3': case 'ArrowUp': case ' ': shootSI(); break;
-                }
             }
         }
 
