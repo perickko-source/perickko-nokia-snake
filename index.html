@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Nokia Snake</title>
+    <title>Nokia Games</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
-        
         body {
             font-family: 'Courier New', monospace;
             background: #373e50;
@@ -18,33 +17,27 @@
             touch-action: manipulation; 
             padding-top: 10px;
         }
-
         .nokia-container {
             position: relative;
             width: 360px;
             height: 720px;
             transform-origin: top center;
         }
-
         .game-layer {
             position: absolute;
-            top: 174px; 
-            left: 58px;
-            width: 240px;
-            height: 182px;
+            top: 174px; left: 58px;
+            width: 240px; height: 182px;
             z-index: 1;
             background: #9ead86;
             display: flex;
             justify-content: center;
             align-items: center;
         }
-
         #gameCanvas {
             display: block;
             image-rendering: pixelated;
             background: #9ead86;
         }
-
         .skin-overlay {
             position: absolute;
             top: 0; left: 0;
@@ -56,7 +49,6 @@
             z-index: 2;
             pointer-events: none;
         }
-
         .key-button {
             position: absolute;
             background: transparent;
@@ -67,21 +59,28 @@
             transition: opacity 0.1s;
             touch-action: manipulation;
         }
-
         .key-button:hover, .key-button:active {
             opacity: 0.2;
             background: #fff;
             border-radius: 50%;
         }
-
+        .key-0 { top: 622px; left: 147px; width: 60px; height: 36px; }
+        .key-1 { top: 460px; left: 63px; width: 57px; height: 38px; }
+        .key-2 { top: 473px; left: 147px; width: 60px; height: 36px; }
+        .key-3 { top: 460px; left: 234px; width: 60px; height: 38px; }
+        .key-4 { top: 510px; left: 65px; width: 58px; height: 38px; }
+        .key-5 { top: 523px; left: 147px; width: 60px; height: 35px; }
+        .key-6 { top: 510px; left: 232px; width: 60px; height: 37px; }
+        .key-7 { top: 559px; left: 69px; width: 56px; height: 38px; }
+        .key-8 { top: 572px; left: 147px; width: 60px; height: 35px; }
+        .key-9 { top: 559px; left: 229px; width: 58px; height: 38px; }
         .key-c { top: 392px; left: 80px; width: 40px; height: 35px; }
-        .key-center { top: 368px; left: 135px; width: 80px; height: 34px; }
-        .key-2 { top: 472px; left: 147px; width: 60px; height: 38px; }
-        .key-4 { top: 508px; left: 65px; width: 60px; height: 41px; }
-        .key-6 { top: 507px; left: 232px; width: 60px; height: 40px; }
-        .key-8 { top: 572px; left: 148px; width: 60px; height: 36px; }
+        .key-blue { top: 368px; left: 135px; width: 80px; height: 34px; }
+        .key-left { top: 420px; left: 199px; width: 35px; height: 30px; }
+        .key-right { top: 388px; left: 243px; width: 35px; height: 30px; }
+        .key-star { top: 609px; left: 71px; width: 57px; height: 38px; }
+        .key-hash { top: 608px; left: 226px; width: 60px; height: 38px; }
         .key-radio { top: 658px; left: 76px; width: 45px; height: 46px; }
-
         .overlay-screen {
             position: absolute;
             top: 17px; left: 20px;
@@ -95,11 +94,9 @@
             text-align: center;
             z-index: 20;
         }
-
         .overlay-screen h1 { font-size: 13px; margin-bottom: 4px; color: #2d3a1f; }
         .overlay-screen h2 { font-size: 11px; margin-bottom: 4px; color: #2d3a1f; }
         .overlay-screen p { font-size: 8px; margin: 2px 0; color: #2d3a1f; line-height: 1.2; }
-
         .btn {
             background: #2d3a1f;
             color: #9ead86;
@@ -115,11 +112,9 @@
             z-index: 30;
             touch-action: manipulation;
         }
-
         .btn:hover { background: #9ead86; color: #2d3a1f; }
         .hidden { display: none !important; }
-
-        .speed-selector {
+        .speed-selector, .game-selector {
             position: absolute;
             top: 17px; left: 20px;
             width: 200px; height: 147px;
@@ -132,19 +127,8 @@
             text-align: center;
             z-index: 20;
         }
-
-        .speed-selector h2 {
-            font-size: 11px;
-            margin-bottom: 8px;
-            color: #2d3a1f;
-        }
-
-        .speed-option {
-            font-size: 10px;
-            margin: 3px 0;
-            color: #2d3a1f;
-            font-weight: bold;
-        }
+        .speed-selector h2, .game-selector h2 { font-size: 11px; margin-bottom: 8px; color: #2d3a1f; }
+        .speed-option, .game-option { font-size: 10px; margin: 3px 0; color: #2d3a1f; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -152,46 +136,71 @@
         <div class="game-layer">
             <canvas id="gameCanvas" width="200" height="147"></canvas>
 
-            <div id="menuScreen" class="overlay-screen">
-                <h1>&#x1F40D; SNAKE</h1>
-                <p>&#xA1;Come todas las caritas!</p>
-                <p>&#x1F600;+10 &#x1F601;+15 &#x1F60D;+20<br>&#x1F929;+25 &#x1F973;+30 &#x1F608;+5<br>&#x1F911;+50 &#x1F92A;+40</p>
-                <button class="btn" onclick="showSpeedSelector()">&#x25B6; Jugar</button>
-                <button class="btn" onclick="showRanking()">&#x1F3C6; Ranking</button>
+            <div id="mainMenuScreen" class="game-selector">
+                <h1>NOKIA GAMES</h1>
+                <div class="game-option" id="game-snake"><span id="cursor-snake">> </span>  Snake</div>
+                <div class="game-option" id="game-si"><span id="cursor-si">  </span> 🛸 Space Invaders</div>
+            </div>
+
+            <div id="menuScreen" class="overlay-screen hidden">
+                <h1>🐍 SNAKE</h1>
+                <p>¡Come todas las caritas!</p>
+                <p>😀+10 😁+15 😍+20<br>🤩+25 +30 😈+5<br>+50 🤪+40</p>
+                <button class="btn" onclick="showSpeedSelector()">▶ Jugar</button>
+                <button class="btn" onclick="showRanking()">🏆 Ranking</button>
             </div>
 
             <div id="speedScreen" class="speed-selector hidden">
                 <h2>ELIGE VELOCIDAD:</h2>
-                <div class="speed-option" id="speed-slow"><span id="cursor-slow">  </span> &#x1F422; Lento</div>
-                <div class="speed-option" id="speed-normal"><span id="cursor-normal">  </span> &#x1F407; Normal</div>
-                <div class="speed-option" id="speed-fast"><span id="cursor-fast">  </span> &#x1F680; R&#xE1;pido</div>
+                <div class="speed-option" id="speed-slow"><span id="cursor-slow">  </span> 🐢 Lento</div>
+                <div class="speed-option" id="speed-normal"><span id="cursor-normal">  </span> 🐇 Normal</div>
+                <div class="speed-option" id="speed-fast"><span id="cursor-fast">  </span>  Rápido</div>
             </div>
 
             <div id="gameOverScreen" class="overlay-screen hidden">
-                <h2>&#x1F4A5; &#xA1;Game Over!</h2>
+                <h2> ¡Game Over!</h2>
                 <p>Puntos: <span id="finalScore">0</span></p>
-                <p>&#x1F40D; Long: <span id="finalLength">0</span></p>
-                <p>&#x1F34E; Comida: <span id="finalFood">0</span></p>
-                <button class="btn" onclick="showSpeedSelector()">&#x1F504; Otra Vez</button>
-                <button class="btn" onclick="showMenu()">&#x1F3E0; Men&#xFA;</button>
-                <button class="btn" onclick="shareScore()">&#x1F4E4; Compartir</button>
+                <p>🐍 Long: <span id="finalLength">0</span></p>
+                <p>🙂 Caritas Comidas: <span id="finalFood">0</span></p>
+                <button class="btn" onclick="showSpeedSelector()">🔄 Otra Vez</button>
+                <button class="btn" onclick="showMenu()">🏠 Menú</button>
+                <button class="btn" onclick="shareScore()"> Compartir</button>
+            </div>
+
+            <div id="siGameOverScreen" class="overlay-screen hidden">
+                <h2>💥 ¡Game Over!</h2>
+                <p>ESCORE: <span id="siFinalScore">0</span></p>
+                <p>👾 Naves: <span id="siFinalKills">0</span></p>
+                <p> Oleada: <span id="siFinalWave">1</span></p>
+                <button class="btn" onclick="startSI()">🔄 Otra Vez</button>
+                <button class="btn" onclick="showMainMenu()">🏠 Menú</button>
             </div>
 
             <div id="rankingScreen" class="overlay-screen hidden">
-                <h2>&#x1F3C6; Top Serpientes</h2>
+                <h2>🏆 Top Serpientes</h2>
                 <div id="rankingList" style="margin: 5px 0; font-size: 8px; max-height: 60px; overflow-y: auto;"></div>
-                <button class="btn" onclick="showMenu()">Cerrar</button>
+                <button class="btn" onclick="showMainMenu()">Cerrar</button>
             </div>
         </div>
 
         <div class="skin-overlay"></div>
 
-        <button class="key-button key-c" onclick="handleKey('c')" title="Men&#xFA; (C)"></button>
-        <button class="key-button key-center" onclick="handleKey('5')" title="Start/Pausa"></button>
-        <button class="key-button key-2" onclick="handleKey('2')" title="Arriba"></button>
-        <button class="key-button key-4" onclick="handleKey('4')" title="Izquierda"></button>
-        <button class="key-button key-6" onclick="handleKey('6')" title="Derecha"></button>
-        <button class="key-button key-8" onclick="handleKey('8')" title="Abajo"></button>
+        <button class="key-button key-c" onclick="handleKey('c')" title="Menú (C)"></button>
+        <button class="key-button key-blue" onclick="handleKey('blue')" title="Botón azul (Start/Pausa)"></button>
+        <button class="key-button key-left" onclick="handleKey('left')" title="Izquierda"></button>
+        <button class="key-button key-right" onclick="handleKey('right')" title="Derecha"></button>
+        <button class="key-button key-1" onclick="handleKey('1')" title="1"></button>
+        <button class="key-button key-2" onclick="handleKey('2')" title="2"></button>
+        <button class="key-button key-3" onclick="handleKey('3')" title="3"></button>
+        <button class="key-button key-4" onclick="handleKey('4')" title="4"></button>
+        <button class="key-button key-5" onclick="handleKey('5')" title="5"></button>
+        <button class="key-button key-6" onclick="handleKey('6')" title="6"></button>
+        <button class="key-button key-7" onclick="handleKey('7')" title="7"></button>
+        <button class="key-button key-8" onclick="handleKey('8')" title="8"></button>
+        <button class="key-button key-9" onclick="handleKey('9')" title="9"></button>
+        <button class="key-button key-star" onclick="handleKey('star')" title="*"></button>
+        <button class="key-button key-0" onclick="handleKey('0')" title="0"></button>
+        <button class="key-button key-hash" onclick="handleKey('hash')" title="#"></button>
         <button class="key-button key-radio" onclick="toggleRadio()" title="80 y 90 Radio"></button>
     </div>
 
@@ -217,25 +226,42 @@
             const now = audioCtx.currentTime;
 
             if (type === 'eat') {
-                osc.type = 'square';
-                osc.frequency.setValueAtTime(600, now);
-                osc.frequency.exponentialRampToValueAtTime(1200, now + 0.1);
-                gain.gain.setValueAtTime(0.1, now);
-                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                osc.type = 'square'; osc.frequency.setValueAtTime(600, now); osc.frequency.exponentialRampToValueAtTime(1200, now + 0.1);
+                gain.gain.setValueAtTime(0.1, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
                 osc.start(now); osc.stop(now + 0.1);
             } else if (type === 'die') {
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(300, now);
-                osc.frequency.exponentialRampToValueAtTime(50, now + 0.4);
-                gain.gain.setValueAtTime(0.15, now);
-                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+                osc.type = 'sawtooth'; osc.frequency.setValueAtTime(300, now); osc.frequency.exponentialRampToValueAtTime(50, now + 0.4);
+                gain.gain.setValueAtTime(0.15, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
                 osc.start(now); osc.stop(now + 0.4);
             } else if (type === 'ui') {
-                osc.type = 'square';
-                osc.frequency.setValueAtTime(800, now);
-                gain.gain.setValueAtTime(0.05, now);
-                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+                osc.type = 'square'; osc.frequency.setValueAtTime(800, now);
+                gain.gain.setValueAtTime(0.05, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
                 osc.start(now); osc.stop(now + 0.05);
+            } else if (type === 'shoot') {
+                osc.type = 'square'; osc.frequency.setValueAtTime(800, now); osc.frequency.exponentialRampToValueAtTime(200, now + 0.1);
+                gain.gain.setValueAtTime(0.08, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                osc.start(now); osc.stop(now + 0.1);
+            } else if (type === 'explosion') {
+                osc.type = 'sawtooth'; osc.frequency.setValueAtTime(200, now); osc.frequency.exponentialRampToValueAtTime(50, now + 0.2);
+                gain.gain.setValueAtTime(0.12, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+                osc.start(now); osc.stop(now + 0.2);
+            } else if (type === 'hit') {
+                osc.type = 'square'; osc.frequency.setValueAtTime(150, now); osc.frequency.exponentialRampToValueAtTime(80, now + 0.3);
+                gain.gain.setValueAtTime(0.15, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                osc.start(now); osc.stop(now + 0.3);
+            } else if (type === 'extralife') {
+                osc.type = 'square'; osc.frequency.setValueAtTime(400, now); osc.frequency.setValueAtTime(600, now + 0.1); osc.frequency.setValueAtTime(800, now + 0.2);
+                gain.gain.setValueAtTime(0.1, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                osc.start(now); osc.stop(now + 0.3);
+            } else if (type === 'wave') {
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(300, now);
+                osc.frequency.setValueAtTime(400, now + 0.1);
+                osc.frequency.setValueAtTime(500, now + 0.2);
+                osc.frequency.setValueAtTime(600, now + 0.3);
+                gain.gain.setValueAtTime(0.1, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+                osc.start(now); osc.stop(now + 0.4);
             }
         }
 
@@ -244,23 +270,25 @@
         let isRadioPlaying = false;
 
         function toggleRadio() {
-            if (isRadioPlaying) {
-                radioStream.pause();
-                isRadioPlaying = false;
-            } else {
-                radioStream.play().catch(e => console.log("Error al reproducir radio:", e));
-                isRadioPlaying = true;
-            }
+            if (isRadioPlaying) { radioStream.pause(); isRadioPlaying = false; } 
+            else { radioStream.play().catch(e => console.log("Error radio:", e)); isRadioPlaying = true; }
         }
 
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
+        
         const gridSize = 8;
         const tileCountX = Math.floor(canvas.width / gridSize);
         const tileCountY = Math.floor(canvas.height / gridSize);
 
-        let snake = [], food = {}, dx = 0, dy = 0, score = 0, gameLoop = null, gameSpeed = 150, foodEaten = 0;
+        const siGridSize = 3;
+        const siTileCountX = Math.floor(canvas.width / siGridSize);
+        const siTileCountY = Math.floor(canvas.height / siGridSize);
 
+        let currentGame = null;
+
+        // ============ SNAKE ============
+        let snake = [], food = {}, dx = 0, dy = 0, score = 0, gameLoop = null, gameSpeed = 150, foodEaten = 0;
         let selectedSpeed = 1;
         const speeds = [200, 150, 100];
 
@@ -281,7 +309,7 @@
             return foodTypes[0];
         }
 
-        function initGame() {
+        function initSnake() {
             snake = [{ x: Math.floor(tileCountX / 2), y: Math.floor(tileCountY / 2) }, { x: Math.floor(tileCountX / 2) - 1, y: Math.floor(tileCountY / 2) }, { x: Math.floor(tileCountX / 2) - 2, y: Math.floor(tileCountY / 2) }];
             dx = 1; dy = 0; score = 0; foodEaten = 0; updateScore(); placeFood();
         }
@@ -295,72 +323,452 @@
             food = newFood;
         }
 
-        function drawGame() {
-            ctx.fillStyle = '#9ead86';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
+        function drawSnake() {
+            ctx.fillStyle = '#9ead86'; ctx.fillRect(0, 0, canvas.width, canvas.height);
             ctx.fillStyle = '#2d3a1f';
             for (let i = 0; i < snake.length; i++) {
                 const segment = snake[i];
                 ctx.fillRect(segment.x * gridSize, segment.y * gridSize, gridSize - 1, gridSize - 1);
-                
-                if (i === 0) {
-                    drawSimpleEyes(segment.x * gridSize, segment.y * gridSize);
-                }
+                if (i === 0) drawSimpleEyes(segment.x * gridSize, segment.y * gridSize);
             }
-
-            ctx.font = '7px Arial';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
+            ctx.font = '7px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
             ctx.fillText(food.emoji, food.x * gridSize + gridSize / 2, food.y * gridSize + gridSize / 2 + 1);
         }
 
-        // ✅ FUNCIÓN CORREGIDA: Ojitos minimalistas con restauración de color
         function drawSimpleEyes(x, y) {
             ctx.fillStyle = '#ffffff';
-            
             let eye1X, eye1Y, eye2X, eye2Y;
-
-            if (dx === 1) { // Derecha
-                eye1X = x + 5; eye1Y = y + 2;
-                eye2X = x + 5; eye2Y = y + 5;
-            } else if (dx === -1) { // Izquierda
-                eye1X = x + 2; eye1Y = y + 2;
-                eye2X = x + 2; eye2Y = y + 5;
-            } else if (dy === -1) { // Arriba
-                eye1X = x + 2; eye1Y = y + 2;
-                eye2X = x + 5; eye2Y = y + 2;
-            } else { // Abajo (o quieto)
-                eye1X = x + 2; eye1Y = y + 5;
-                eye2X = x + 5; eye2Y = y + 5;
-            }
-
-            ctx.fillRect(eye1X, eye1Y, 1, 1);
-            ctx.fillRect(eye2X, eye2Y, 1, 1);
-            
-            // ✅ RESTAURAR el color original de la serpiente
+            if (dx === 1) { eye1X = x + 5; eye1Y = y + 2; eye2X = x + 5; eye2Y = y + 5; } 
+            else if (dx === -1) { eye1X = x + 2; eye1Y = y + 2; eye2X = x + 2; eye2Y = y + 5; } 
+            else if (dy === -1) { eye1X = x + 2; eye1Y = y + 2; eye2X = x + 5; eye2Y = y + 2; } 
+            else { eye1X = x + 2; eye1Y = y + 5; eye2X = x + 5; eye2Y = y + 5; }
+            ctx.fillRect(eye1X, eye1Y, 1, 1); ctx.fillRect(eye2X, eye2Y, 1, 1);
             ctx.fillStyle = '#2d3a1f';
         }
 
-        function updateGame() {
+        function updateSnake() {
             const head = { x: snake[0].x + dx, y: snake[0].y + dy };
-            if (head.x < 0) head.x = tileCountX - 1;
-            else if (head.x >= tileCountX) head.x = 0;
-            if (head.y < 0) head.y = tileCountY - 1;
-            else if (head.y >= tileCountY) head.y = 0;
-
-            if (snake.some(segment => head.x === segment.x && head.y === segment.y)) return gameOver();
+            if (head.x < 0) head.x = tileCountX - 1; else if (head.x >= tileCountX) head.x = 0;
+            if (head.y < 0) head.y = tileCountY - 1; else if (head.y >= tileCountY) head.y = 0;
+            if (snake.some(segment => head.x === segment.x && head.y === segment.y)) return gameOverSnake();
             snake.unshift(head);
-
             if (head.x === food.x && head.y === food.y) {
                 score += food.points; foodEaten++; if (score < 0) score = 0; updateScore(); placeFood();
                 playSound('eat');
-                if (score > 0 && score % 50 === 0 && gameSpeed > 60) { gameSpeed -= 10; clearInterval(gameLoop); gameLoop = setInterval(gameStep, gameSpeed); }
+                if (score > 0 && score % 50 === 0 && gameSpeed > 60) { gameSpeed -= 10; clearInterval(gameLoop); gameLoop = setInterval(gameStepSnake, gameSpeed); }
             } else { snake.pop(); }
-            drawGame();
+            drawSnake();
         }
 
-        function gameStep() { updateGame(); }
+        function gameStepSnake() { updateSnake(); }
+
+        function gameOverSnake() {
+            playSound('die'); clearInterval(gameLoop); gameLoop = null;
+            document.getElementById('finalScore').textContent = score;
+            document.getElementById('finalLength').textContent = snake.length;
+            document.getElementById('finalFood').textContent = foodEaten;
+            document.getElementById('gameOverScreen').classList.remove('hidden');
+            saveScore(score); currentGame = null;
+        }
+
+        // ============ SPACE INVADERS ============
+        let siPlayer = { x: 28, y: 43 };
+        let siBullets = [];
+        let siEnemyBullets = [];
+        let siAliens = [];
+        let siAlienDirection = 1;
+        let siAlienMoveTimer = 0;
+        let siAlienMoveInterval = 12;
+        let siBaseMoveInterval = 12;
+        let siGameLoop = null;
+        let siScore = 0;
+        let siLives = 3;
+        let siWave = 1;
+        let siKills = 0; 
+        let siKeysPressed = { left: false, right: false };
+        let siEnemy4 = null;
+        let siEnemy4Timer = 0;
+        let siEnemy4Interval = 0;
+        let siLastScoreForExtraLife = 0;
+        let siBarriers = [];
+
+        const COLOR_ALIEN = '#2d3a1f';
+        const COLOR_SHIP = '#1f2a15';
+        const COLOR_BARRIER = '#3a4a2a';
+        const COLOR_ENEMY4 = '#253018';
+        const COLOR_BULLET = '#1f2a15';
+        const COLOR_HUD = '#2d3a1f';
+
+        const sprites = {
+            ship: [
+                [0,0,0,1,0,0,0],
+                [0,0,1,1,1,0,0],
+                [0,1,1,1,1,1,0]
+            ],
+            alien1: [
+                [0,1,1,0],
+                [1,1,1,1],
+                [0,1,1,0]
+            ],
+            alien2: [
+                [1,0,0,1],
+                [1,1,1,1],
+                [0,1,1,0]
+            ],
+            alien3: [
+                [0,1,1,0],
+                [1,1,1,1],
+                [1,0,0,1]
+            ],
+            alien4: [
+                [0,0,1,1,1,0,0],
+                [0,1,1,1,1,1,0],
+                [1,1,0,1,0,1,1]
+            ],
+            barrier: [
+                [0,1,1,1,1,1,1,0],
+                [1,1,1,1,1,1,1,1],
+                [1,1,1,1,1,1,1,1],
+                [1,1,1,0,0,1,1,1]
+            ]
+        };
+
+        const siShipWidth = sprites.ship[0].length;
+        const siShipHeight = sprites.ship.length;
+        const siBarrierWidth = sprites.barrier[0].length;
+        const siBarrierHeight = sprites.barrier.length;
+
+        function drawMatrix(matrix, tileX, tileY, color, scale) {
+            const s = scale || siGridSize;
+            ctx.fillStyle = color;
+            for (let r = 0; r < matrix.length; r++) {
+                for (let c = 0; c < matrix[r].length; c++) {
+                    if (matrix[r][c] === 1) {
+                        ctx.fillRect(
+                            Math.floor(tileX * s + c * s),
+                            Math.floor(tileY * s + r * s),
+                            s, s
+                        );
+                    }
+                }
+            }
+        }
+
+        // ✅ HUD ACTUALIZADO: Muestra naves visuales en lugar de números
+        function drawHUD() {
+            ctx.fillStyle = COLOR_HUD;
+            ctx.font = '7px Courier New';
+            
+            // ESCORE a la izquierda
+            ctx.textAlign = 'left';
+            ctx.fillText(`ESCORE:${siScore}`, 2, 7);
+            
+            // ✅ Naves de vida a la derecha (máximo 3 visibles)
+            const shipDisplayScale = 2; // Escala de las naves del HUD
+            const shipDisplayWidth = siShipWidth * shipDisplayScale; // 14px
+            const shipDisplayHeight = siShipHeight * shipDisplayScale; // 6px
+            const shipSpacing = 2; // Espacio entre naves
+            const totalWidth = 3 * shipDisplayWidth + 2 * shipSpacing; // 46px para 3 naves
+            const startX = canvas.width - totalWidth - 2; // Empezar desde la derecha
+            
+            // Dibujar hasta 3 naves
+            const shipsToShow = Math.min(siLives, 3);
+            for (let i = 0; i < shipsToShow; i++) {
+                const shipX = startX + i * (shipDisplayWidth + shipSpacing);
+                // Dibujar nave en posición de píxeles (no tiles)
+                ctx.fillStyle = COLOR_SHIP;
+                for (let r = 0; r < sprites.ship.length; r++) {
+                    for (let c = 0; c < sprites.ship[r].length; c++) {
+                        if (sprites.ship[r][c] === 1) {
+                            ctx.fillRect(
+                                shipX + c * shipDisplayScale,
+                                1 + r * shipDisplayScale,
+                                shipDisplayScale, shipDisplayScale
+                            );
+                        }
+                    }
+                }
+            }
+            
+            // ✅ Si hay más de 3 vidas, mostrar "+X" después
+            if (siLives > 3) {
+                const extraLives = siLives - 3;
+                ctx.fillStyle = COLOR_HUD;
+                ctx.textAlign = 'left';
+                ctx.fillText(`+${extraLives}`, startX + totalWidth + 2, 7);
+            }
+        }
+
+        function initSI() {
+            siPlayer = { x: Math.floor((siTileCountX - siShipWidth) / 2), y: siTileCountY - siShipHeight - 3 };
+            siBullets = [];
+            siEnemyBullets = [];
+            siAliens = [];
+            siAlienDirection = 1;
+            siAlienMoveTimer = 0;
+            siBaseMoveInterval = 12;
+            siAlienMoveInterval = siBaseMoveInterval;
+            siScore = 0;
+            siLives = 3;
+            siWave = 1;
+            siKills = 0; 
+            siKeysPressed = { left: false, right: false };
+            siEnemy4 = null;
+            siEnemy4Timer = 0;
+            siEnemy4Interval = getRandomEnemy4Interval();
+            siLastScoreForExtraLife = 0;
+
+            spawnWave();
+            drawSI();
+        }
+
+        function spawnWave() {
+            siAliens = [];
+            siAlienDirection = 1;
+            siAlienMoveTimer = 0;
+            siAlienMoveInterval = siBaseMoveInterval;
+            siEnemy4 = null;
+            siEnemy4Timer = 0;
+
+            const numCols = 8;
+            const startX = 5;
+            const startY = Math.min(7 + (siWave - 1) * 2, 10);
+            const spacingX = 3;
+            const spacingY = 2;
+
+            for (let col = 0; col < numCols; col++) {
+                siAliens.push({ x: startX + col * (4 + spacingX), y: startY, type: 1, width: 4, height: 3, points: 30 });
+            }
+            for (let row = 0; row < 2; row++) {
+                for (let col = 0; col < numCols; col++) {
+                    siAliens.push({ x: startX + col * (4 + spacingX), y: startY + (3 + spacingY) * (row + 1), type: 2, width: 4, height: 3, points: 20 });
+                }
+            }
+            for (let row = 0; row < 2; row++) {
+                for (let col = 0; col < numCols; col++) {
+                    siAliens.push({ x: startX + col * (4 + spacingX), y: startY + (3 + spacingY) * (row + 3), type: 3, width: 4, height: 3, points: 10 });
+                }
+            }
+
+            createBarriers();
+            playSound('wave');
+        }
+
+        function createBarriers() {
+            siBarriers = [];
+            const barrierSpacing = (siTileCountX - 4 * siBarrierWidth) / 5;
+            for (let i = 0; i < 4; i++) {
+                const barrierX = Math.floor(barrierSpacing * (i + 1) + siBarrierWidth * i);
+                const pixels = [];
+                for (let r = 0; r < sprites.barrier.length; r++) {
+                    for (let c = 0; c < sprites.barrier[r].length; c++) {
+                        if (sprites.barrier[r][c] === 1) {
+                            pixels.push({ x: c, y: r, active: true });
+                        }
+                    }
+                }
+                siBarriers.push({ x: barrierX, y: siTileCountY - 10, pixels: pixels });
+            }
+        }
+
+        function getRandomEnemy4Interval() { return Math.floor(Math.random() * 150) + 450; }
+
+        function spawnEnemy4() {
+            siEnemy4 = { x: siTileCountX, y: 2, width: 7, height: 3, speed: 0.3, points: 50 };
+        }
+
+        function drawSI() {
+            ctx.fillStyle = '#9ead86'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            drawHUD();
+
+            for (let alien of siAliens) {
+                let matrix = sprites[`alien${alien.type}`];
+                drawMatrix(matrix, alien.x, alien.y, COLOR_ALIEN);
+            }
+
+            if (siEnemy4) drawMatrix(sprites.alien4, siEnemy4.x, siEnemy4.y, COLOR_ENEMY4);
+
+            ctx.fillStyle = COLOR_BARRIER;
+            for (let barrier of siBarriers) {
+                for (let pixel of barrier.pixels) {
+                    if (pixel.active) {
+                        ctx.fillRect(
+                            (barrier.x + pixel.x) * siGridSize,
+                            (barrier.y + pixel.y) * siGridSize,
+                            siGridSize, siGridSize
+                        );
+                    }
+                }
+            }
+
+            drawMatrix(sprites.ship, siPlayer.x, siPlayer.y, COLOR_SHIP);
+
+            ctx.fillStyle = COLOR_BULLET;
+            for (let bullet of siBullets) {
+                ctx.fillRect(Math.floor(bullet.x * siGridSize), Math.floor(bullet.y * siGridSize), siGridSize, siGridSize * 3);
+            }
+            for (let bullet of siEnemyBullets) {
+                ctx.fillRect(Math.floor(bullet.x * siGridSize), Math.floor(bullet.y * siGridSize), siGridSize, siGridSize * 3);
+            }
+        }
+
+        function processSIMovement() {
+            if (siKeysPressed.left && siPlayer.x > 0) siPlayer.x--;
+            if (siKeysPressed.right && siPlayer.x < siTileCountX - siShipWidth) siPlayer.x++;
+
+            siAlienMoveTimer++;
+            if (siAlienMoveTimer >= siAlienMoveInterval) { siAlienMoveTimer = 0; moveAliens(); }
+
+            for (let i = siBullets.length - 1; i >= 0; i--) { siBullets[i].y -= 3; if (siBullets[i].y < 0) siBullets.splice(i, 1); }
+            for (let i = siEnemyBullets.length - 1; i >= 0; i--) { siEnemyBullets[i].y += 2; if (siEnemyBullets[i].y >= siTileCountY) siEnemyBullets.splice(i, 1); }
+
+            if (siEnemy4) { siEnemy4.x -= siEnemy4.speed; if (siEnemy4.x < -siEnemy4.width) siEnemy4 = null; }
+            siEnemy4Timer++;
+            if (siEnemy4Timer >= siEnemy4Interval && !siEnemy4) { spawnEnemy4(); siEnemy4Timer = 0; siEnemy4Interval = getRandomEnemy4Interval(); }
+
+            if (siAliens.length > 0 && Math.random() < 0.03) {
+                const shooter = siAliens[Math.floor(Math.random() * siAliens.length)];
+                siEnemyBullets.push({ x: shooter.x + Math.floor(shooter.width / 2), y: shooter.y + shooter.height });
+            }
+
+            for (let i = siBullets.length - 1; i >= 0; i--) {
+                const bullet = siBullets[i];
+                let hit = false;
+
+                for (let j = siAliens.length - 1; j >= 0; j--) {
+                    const alien = siAliens[j];
+                    if (bullet.x >= alien.x && bullet.x < alien.x + alien.width && bullet.y >= alien.y && bullet.y < alien.y + alien.height) {
+                        siScore += alien.points; 
+                        siKills++; 
+                        siAliens.splice(j, 1); siBullets.splice(i, 1);
+                        playSound('explosion'); hit = true; checkExtraLife(); break;
+                    }
+                }
+
+                if (!hit && siEnemy4) {
+                    if (bullet.x >= siEnemy4.x && bullet.x < siEnemy4.x + siEnemy4.width && bullet.y >= siEnemy4.y && bullet.y < siEnemy4.y + siEnemy4.height) {
+                        siScore += siEnemy4.points; 
+                        siKills++; 
+                        siEnemy4 = null; siBullets.splice(i, 1);
+                        playSound('explosion'); hit = true; checkExtraLife();
+                    }
+                }
+
+                if (!hit) {
+                    for (let barrier of siBarriers) {
+                        for (let pixel of barrier.pixels) {
+                            if (pixel.active) {
+                                const pixelX = barrier.x + pixel.x; const pixelY = barrier.y + pixel.y;
+                                if (bullet.x >= pixelX && bullet.x < pixelX + 1 && bullet.y >= pixelY && bullet.y < pixelY + 1) {
+                                    pixel.active = false; siBullets.splice(i, 1); hit = true; break;
+                                }
+                            }
+                        }
+                        if (hit) break;
+                    }
+                }
+            }
+
+            for (let i = siEnemyBullets.length - 1; i >= 0; i--) {
+                const bullet = siEnemyBullets[i];
+                let hit = false;
+                for (let barrier of siBarriers) {
+                    for (let pixel of barrier.pixels) {
+                        if (pixel.active) {
+                            const pixelX = barrier.x + pixel.x; const pixelY = barrier.y + pixel.y;
+                            if (bullet.x >= pixelX && bullet.x < pixelX + 1 && bullet.y >= pixelY && bullet.y < pixelY + 1) {
+                                pixel.active = false; siEnemyBullets.splice(i, 1); hit = true; break;
+                            }
+                        }
+                    }
+                    if (hit) break;
+                }
+            }
+
+            for (let i = siEnemyBullets.length - 1; i >= 0; i--) {
+                const bullet = siEnemyBullets[i];
+                if (bullet.x >= siPlayer.x && bullet.x < siPlayer.x + siShipWidth && bullet.y >= siPlayer.y && bullet.y < siPlayer.y + siShipHeight) {
+                    siEnemyBullets.splice(i, 1); siLives--; playSound('hit');
+                    if (siLives <= 0) gameOverSI();
+                }
+            }
+
+            for (let alien of siAliens) { if (alien.y + alien.height >= siPlayer.y) { gameOverSI(); return; } }
+            
+            if (siAliens.length === 0) {
+                siWave++;
+                siBaseMoveInterval = Math.max(4, siBaseMoveInterval - 1);
+                spawnWave();
+            }
+        }
+
+        function moveAliens() {
+            let hitEdge = false;
+            for (let alien of siAliens) {
+                if ((siAlienDirection === 1 && alien.x + alien.width >= siTileCountX - 1) || (siAlienDirection === -1 && alien.x <= 1)) { hitEdge = true; break; }
+            }
+            if (hitEdge) { siAlienDirection *= -1; for (let alien of siAliens) alien.y++; } 
+            else { for (let alien of siAliens) alien.x += siAlienDirection; }
+            
+            const totalAliens = 40;
+            const remainingRatio = siAliens.length / totalAliens;
+            siAlienMoveInterval = Math.max(3, Math.floor(siBaseMoveInterval * remainingRatio));
+        }
+
+        function checkExtraLife() {
+            if (siScore >= siLastScoreForExtraLife + 1000) { siLives++; siLastScoreForExtraLife += 1000; playSound('extralife'); }
+        }
+
+        function updateSI() { processSIMovement(); drawSI(); }
+        function gameStepSI() { updateSI(); }
+
+        function shootSI() {
+            if (siBullets.length < 2) { siBullets.push({ x: siPlayer.x + Math.floor(siShipWidth / 2), y: siPlayer.y - 1 }); playSound('shoot'); }
+        }
+
+        function gameOverSI() {
+            clearInterval(siGameLoop); siGameLoop = null; currentGame = null; playSound('die');
+            
+            document.getElementById('siFinalScore').textContent = siScore;
+            document.getElementById('siFinalKills').textContent = siKills;
+            document.getElementById('siFinalWave').textContent = siWave;
+            document.getElementById('siGameOverScreen').classList.remove('hidden');
+        }
+
+        let selectedGame = 0;
+
+        function showMainMenu() {
+            playSound('ui');
+            document.getElementById('menuScreen').classList.add('hidden');
+            document.getElementById('speedScreen').classList.add('hidden');
+            document.getElementById('gameOverScreen').classList.add('hidden');
+            document.getElementById('siGameOverScreen').classList.add('hidden'); 
+            document.getElementById('rankingScreen').classList.add('hidden');
+            document.getElementById('mainMenuScreen').classList.remove('hidden');
+            selectedGame = 0; updateMainMenuCursor();
+            if (gameLoop) { clearInterval(gameLoop); gameLoop = null; }
+            if (siGameLoop) { clearInterval(siGameLoop); siGameLoop = null; }
+            currentGame = null; siKeysPressed = { left: false, right: false };
+        }
+
+        function updateMainMenuCursor() {
+            document.getElementById('cursor-snake').textContent = selectedGame === 0 ? '> ' : '  ';
+            document.getElementById('cursor-si').textContent = selectedGame === 1 ? '> ' : '  ';
+        }
+
+        function confirmGameSelection() {
+            playSound('ui');
+            if (selectedGame === 0) showMenu(); else if (selectedGame === 1) startSI();
+        }
+
+        function startSI() {
+            document.getElementById('mainMenuScreen').classList.add('hidden');
+            document.getElementById('siGameOverScreen').classList.add('hidden'); 
+            currentGame = 'si'; initSI();
+            if (siGameLoop) clearInterval(siGameLoop);
+            siGameLoop = setInterval(gameStepSI, 60);
+        }
 
         function showSpeedSelector() {
             playSound('ui');
@@ -368,8 +776,7 @@
             document.getElementById('gameOverScreen').classList.add('hidden');
             document.getElementById('rankingScreen').classList.add('hidden');
             document.getElementById('speedScreen').classList.remove('hidden');
-            selectedSpeed = 1;
-            updateSpeedCursor();
+            selectedSpeed = 1; updateSpeedCursor();
         }
 
         function updateSpeedCursor() {
@@ -379,45 +786,22 @@
         }
 
         function confirmSpeed() {
-            playSound('ui');
-            gameSpeed = speeds[selectedSpeed];
+            playSound('ui'); gameSpeed = speeds[selectedSpeed];
             document.getElementById('speedScreen').classList.add('hidden');
-            initGame();
-            drawGame();
+            currentGame = 'snake'; initSnake(); drawSnake();
             if (gameLoop) clearInterval(gameLoop);
-            gameLoop = setInterval(gameStep, gameSpeed);
-        }
-
-        function startGame() {
-            playSound('ui');
-            document.getElementById('menuScreen').classList.add('hidden');
-            document.getElementById('gameOverScreen').classList.add('hidden');
-            document.getElementById('rankingScreen').classList.add('hidden');
-            gameSpeed = 150;
-            initGame();
-            drawGame();
-            if (gameLoop) clearInterval(gameLoop);
-            gameLoop = setInterval(gameStep, gameSpeed);
-        }
-
-        function gameOver() {
-            playSound('die');
-            clearInterval(gameLoop); gameLoop = null;
-            document.getElementById('finalScore').textContent = score;
-            document.getElementById('finalLength').textContent = snake.length;
-            document.getElementById('finalFood').textContent = foodEaten;
-            document.getElementById('gameOverScreen').classList.remove('hidden');
-            saveScore(score);
+            gameLoop = setInterval(gameStepSnake, gameSpeed);
         }
 
         function showMenu() {
             playSound('ui');
+            document.getElementById('mainMenuScreen').classList.add('hidden');
             document.getElementById('gameOverScreen').classList.add('hidden');
             document.getElementById('rankingScreen').classList.add('hidden');
             document.getElementById('speedScreen').classList.add('hidden');
             document.getElementById('menuScreen').classList.remove('hidden');
             if (gameLoop) { clearInterval(gameLoop); gameLoop = null; }
-            drawGame();
+            currentGame = null; drawSnake();
         }
 
         function showRanking() {
@@ -426,7 +810,7 @@
             document.getElementById('rankingScreen').classList.remove('hidden');
             const scores = JSON.parse(localStorage.getItem('snakeScores_80y90') || '[]');
             const rankingList = document.getElementById('rankingList');
-            if (scores.length === 0) { rankingList.innerHTML = '<p>&#xA1;Sin r&#xE9;cords!</p>'; } 
+            if (scores.length === 0) { rankingList.innerHTML = '<p>¡Sin récords!</p>'; } 
             else { scores.sort((a, b) => b.score - a.score); rankingList.innerHTML = scores.slice(0, 10).map((s, i) => `${i + 1}. ${s.score} pts`).join('<br>'); }
         }
 
@@ -434,8 +818,7 @@
             if (newScore === 0) return;
             const scores = JSON.parse(localStorage.getItem('snakeScores_80y90') || '[]');
             const now = new Date();
-            const dateStr = `${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()}`;
-            scores.push({ score: newScore, date: dateStr });
+            scores.push({ score: newScore, date: `${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()}` });
             localStorage.setItem('snakeScores_80y90', JSON.stringify(scores));
         }
 
@@ -443,57 +826,84 @@
 
         function shareScore() {
             playSound('ui');
-            const text = `¡Jugué a Snake en un Nokia y conseguí ${score} puntos! \uD83D\uDCF1`;
+            const text = `¡Jugué a Snake en un Nokia y conseguí ${score} puntos! 📱`;
             if (navigator.share) { navigator.share({ title: 'Nokia Snake', text: text, url: window.location.href }); } 
             else { navigator.clipboard.writeText(text + ' ' + window.location.href); alert('¡Texto copiado!'); }
         }
 
         function handleKey(key) {
-            if (key === 'c' || key === 'C') {
-                showMenu();
-                return;
-            }
+            if (key === 'c' || key === 'C') { showMainMenu(); return; }
 
+            const inMainMenu = !document.getElementById('mainMenuScreen').classList.contains('hidden');
             const inMenu = !document.getElementById('menuScreen').classList.contains('hidden');
             const inSpeed = !document.getElementById('speedScreen').classList.contains('hidden');
             const inGameOver = !document.getElementById('gameOverScreen').classList.contains('hidden');
+            const inSIGameOver = !document.getElementById('siGameOverScreen').classList.contains('hidden'); 
             const inRanking = !document.getElementById('rankingScreen').classList.contains('hidden');
 
+            if (inMainMenu) {
+                if (key === '2' || key === 'ArrowUp') { selectedGame = Math.max(0, selectedGame - 1); updateMainMenuCursor(); playSound('ui'); } 
+                else if (key === '8' || key === 'ArrowDown') { selectedGame = Math.min(1, selectedGame + 1); updateMainMenuCursor(); playSound('ui'); } 
+                else if (key === 'blue' || key === '5' || key === 'Enter' || key === ' ' || key === '3') { confirmGameSelection(); }
+                return;
+            }
+
             if (inSpeed) {
-                if (key === '2') {
-                    selectedSpeed = Math.max(0, selectedSpeed - 1);
-                    updateSpeedCursor();
-                    playSound('ui');
-                } else if (key === '8') {
-                    selectedSpeed = Math.min(2, selectedSpeed + 1);
-                    updateSpeedCursor();
-                    playSound('ui');
-                } else if (key === '5') {
-                    confirmSpeed();
-                }
+                if (key === '2' || key === 'ArrowUp') { selectedSpeed = Math.max(0, selectedSpeed - 1); updateSpeedCursor(); playSound('ui'); } 
+                else if (key === '8' || key === 'ArrowDown') { selectedSpeed = Math.min(2, selectedSpeed + 1); updateSpeedCursor(); playSound('ui'); } 
+                else if (key === 'blue' || key === '5' || key === 'Enter' || key === ' ' || key === '3') { confirmSpeed(); }
+                return;
+            }
+
+            if (inSIGameOver) {
+                if (key === 'blue' || key === '5' || key === 'Enter' || key === ' ' || key === '3') { startSI(); }
                 return;
             }
 
             if (inMenu || inGameOver || inRanking) {
-                if (key === '5') startGame();
+                if (key === 'blue' || key === '5' || key === 'Enter' || key === ' ' || key === '3') {
+                    if (inMenu) showSpeedSelector(); else if (inGameOver) showSpeedSelector(); else if (inRanking) showMenu();
+                }
                 return;
             }
 
-            switch(key) {
-                case '2': if (dy !== 1) { dx = 0; dy = -1; } break;
-                case '8': if (dy !== -1) { dx = 0; dy = 1; } break;
-                case '4': if (dx !== 1) { dx = -1; dy = 0; } break;
-                case '6': if (dx !== -1) { dx = 1; dy = 0; } break;
-                case '5': if (gameLoop) { clearInterval(gameLoop); gameLoop = null; } else { gameLoop = setInterval(gameStep, gameSpeed); } break;
+            if (currentGame === 'snake') {
+                switch(key) {
+                    case '2': case 'ArrowUp': if (dy !== 1) { dx = 0; dy = -1; } break;
+                    case '8': case 'ArrowDown': if (dy !== -1) { dx = 0; dy = 1; } break;
+                    case '4': case 'ArrowLeft': if (dx !== 1) { dx = -1; dy = 0; } break;
+                    case '6': case 'ArrowRight': if (dx !== -1) { dx = 1; dy = 0; } break;
+                    case 'blue': case '5': case ' ': if (gameLoop) { clearInterval(gameLoop); gameLoop = null; } else { gameLoop = setInterval(gameStepSnake, gameSpeed); } break;
+                }
+            } else if (currentGame === 'si') {
+                switch(key) {
+                    case '4': case 'ArrowLeft': siKeysPressed.left = true; break;
+                    case '5': case '6': case 'ArrowRight': siKeysPressed.right = true; break;
+                    case '3': case 'ArrowUp': case ' ': shootSI(); break;
+                }
+            }
+        }
+
+        function handleKeyRelease(key) {
+            if (currentGame === 'si') {
+                switch(key) {
+                    case '4': case 'ArrowLeft': siKeysPressed.left = false; break;
+                    case '5': case '6': case 'ArrowRight': siKeysPressed.right = false; break;
+                }
             }
         }
 
         document.addEventListener('keydown', (e) => {
-            const keyMap = { 'ArrowUp': '2', 'w': '2', 'W': '2', 'ArrowDown': '8', 's': '8', 'S': '8', 'ArrowLeft': '4', 'a': '4', 'A': '4', 'ArrowRight': '6', 'd': '6', 'D': '6', ' ': '5', 'Enter': '5', 'Escape': 'c', 'c': 'c', 'C': 'c' };
+            const keyMap = { 'ArrowUp': '2', 'w': '2', 'W': '2', 'ArrowDown': '8', 's': '8', 'S': '8', 'ArrowLeft': '4', 'a': '4', 'A': '4', 'ArrowRight': '6', 'd': '6', 'D': '6', ' ': '3', 'Enter': 'blue', 'Escape': 'c', 'c': 'c', 'C': 'c' };
             if (keyMap[e.key]) { e.preventDefault(); handleKey(keyMap[e.key]); }
         });
 
-        showMenu();
+        document.addEventListener('keyup', (e) => {
+            const keyMap = { 'ArrowUp': '2', 'w': '2', 'W': '2', 'ArrowDown': '8', 's': '8', 'S': '8', 'ArrowLeft': '4', 'a': '4', 'A': '4', 'ArrowRight': '6', 'd': '6', 'D': '6', ' ': '3', 'Enter': 'blue', 'Escape': 'c', 'c': 'c', 'C': 'c' };
+            if (keyMap[e.key]) { handleKeyRelease(keyMap[e.key]); }
+        });
+
+        showMainMenu();
     </script>
 </body>
 </html>
