@@ -854,7 +854,8 @@
             else { navigator.clipboard.writeText(text + ' ' + window.location.href); alert('¡Texto copiado!'); }
         }
 
-        // ✅ CONTROLES: 1=izquierda, 2=derecha, 3=disparar
+        // ✅ CONTROLES: 1=izquierda, 2=derecha, 3=disparar (móvil)
+        //                4=izquierda, 6=derecha, 3=disparar (PC - flechas)
         function handleKey(key) {
             if (key === 'c' || key === 'C') { showMainMenu(); return; }
 
@@ -881,10 +882,10 @@
                     return;
                 }
                 
-                // ✅ CONTROLES SI: 1=izquierda, 2=derecha, 3=disparar
+                // ✅ CONTROLES SI: acepta 1/4/ArrowLeft para izquierda, 2/6/ArrowRight para derecha, 3/Espacio para disparar
                 switch(key) {
-                    case '1': case 'ArrowLeft': siKeysPressed.left = true; break;
-                    case '2': case 'ArrowRight': siKeysPressed.right = true; break;
+                    case '1': case '4': case 'ArrowLeft': siKeysPressed.left = true; break;
+                    case '2': case '6': case 'ArrowRight': siKeysPressed.right = true; break;
                     case '3': case ' ': shootSI(); break;
                 }
                 return;
@@ -921,19 +922,19 @@
         function handleKeyRelease(key) {
             if (currentGame === 'si') {
                 switch(key) {
-                    case '1': case 'ArrowLeft': siKeysPressed.left = false; break;
-                    case '2': case 'ArrowRight': siKeysPressed.right = false; break;
+                    case '1': case '4': case 'ArrowLeft': siKeysPressed.left = false; break;
+                    case '2': case '6': case 'ArrowRight': siKeysPressed.right = false; break;
                 }
             }
         }
 
-        // ✅ MAPEO TECLADO PC
+        // ✅ MAPEO TECLADO PC (MANTENIDO ORIGINAL para no romper el Snake)
         document.addEventListener('keydown', (e) => {
             const keyMap = { 
                 'ArrowUp': '2', 'w': '2', 'W': '2', 
                 'ArrowDown': '8', 's': '8', 'S': '8', 
-                'ArrowLeft': '1', 'a': '1', 'A': '1', 
-                'ArrowRight': '2', 'd': '2', 'D': '2', 
+                'ArrowLeft': '4', 'a': '4', 'A': '4', 
+                'ArrowRight': '6', 'd': '6', 'D': '6', 
                 ' ': '3', 'Enter': 'blue', 
                 'Escape': 'c', 'c': 'c', 'C': 'c' 
             };
@@ -944,8 +945,8 @@
             const keyMap = { 
                 'ArrowUp': '2', 'w': '2', 'W': '2', 
                 'ArrowDown': '8', 's': '8', 'S': '8', 
-                'ArrowLeft': '1', 'a': '1', 'A': '1', 
-                'ArrowRight': '2', 'd': '2', 'D': '2', 
+                'ArrowLeft': '4', 'a': '4', 'A': '4', 
+                'ArrowRight': '6', 'd': '6', 'D': '6', 
                 ' ': '3', 'Enter': 'blue', 
                 'Escape': 'c', 'c': 'c', 'C': 'c' 
             };
