@@ -58,6 +58,7 @@
             z-index: 10;
             transition: opacity 0.1s;
             touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
         }
         .key-button:hover, .key-button:active {
             opacity: 0.2;
@@ -185,13 +186,42 @@
 
         <div class="skin-overlay"></div>
 
+        <!-- ✅ BOTONES CON EVENTOS TÁCTILES PARA MOVIMIENTO CONTINUO -->
         <button class="key-button key-c" onclick="handleKey('c')" title="Menú (C)"></button>
         <button class="key-button key-blue" onclick="handleKey('blue')" title="Botón azul (Start/Pausa)"></button>
-        <button class="key-button key-left" onclick="handleKey('left')" title="Izquierda"></button>
-        <button class="key-button key-right" onclick="handleKey('right')" title="Derecha"></button>
-        <button class="key-button key-1" onclick="handleKey('1')" title="1"></button>
-        <button class="key-button key-2" onclick="handleKey('2')" title="2"></button>
-        <button class="key-button key-3" onclick="handleKey('3')" title="3"></button>
+        
+        <!-- Botones de movimiento Space Invaders (con touchstart/touchend) -->
+        <button class="key-button key-left" 
+            ontouchstart="handleKey('1'); return false;" 
+            ontouchend="handleKeyRelease('1'); return false;"
+            onmousedown="handleKey('1')" 
+            onmouseup="handleKeyRelease('1')"
+            title="Izquierda"></button>
+        <button class="key-button key-right" 
+            ontouchstart="handleKey('2'); return false;" 
+            ontouchend="handleKeyRelease('2'); return false;"
+            onmousedown="handleKey('2')" 
+            onmouseup="handleKeyRelease('2')"
+            title="Derecha"></button>
+        
+        <!-- Botones numéricos 1, 2, 3 para Space Invaders -->
+        <button class="key-button key-1" 
+            ontouchstart="handleKey('1'); return false;" 
+            ontouchend="handleKeyRelease('1'); return false;"
+            onmousedown="handleKey('1')" 
+            onmouseup="handleKeyRelease('1')"
+            title="1 (Izquierda SI)"></button>
+        <button class="key-button key-2" 
+            ontouchstart="handleKey('2'); return false;" 
+            ontouchend="handleKeyRelease('2'); return false;"
+            onmousedown="handleKey('2')" 
+            onmouseup="handleKeyRelease('2')"
+            title="2 (Derecha SI)"></button>
+        <button class="key-button key-3" 
+            onclick="handleKey('3')"
+            title="3 (Disparar SI)"></button>
+        
+        <!-- Resto de botones numéricos (solo onclick para menús) -->
         <button class="key-button key-4" onclick="handleKey('4')" title="4"></button>
         <button class="key-button key-5" onclick="handleKey('5')" title="5"></button>
         <button class="key-button key-6" onclick="handleKey('6')" title="6"></button>
@@ -824,7 +854,7 @@
             else { navigator.clipboard.writeText(text + ' ' + window.location.href); alert('¡Texto copiado!'); }
         }
 
-        // ✅ CONTROLES UNIFICADOS: 1=izquierda, 2=derecha, 3=disparar
+        // ✅ CONTROLES: 1=izquierda, 2=derecha, 3=disparar
         function handleKey(key) {
             if (key === 'c' || key === 'C') { showMainMenu(); return; }
 
@@ -851,7 +881,7 @@
                     return;
                 }
                 
-                // ✅ NUEVOS CONTROLES: 1=izquierda, 2=derecha, 3=disparar
+                // ✅ CONTROLES SI: 1=izquierda, 2=derecha, 3=disparar
                 switch(key) {
                     case '1': case 'ArrowLeft': siKeysPressed.left = true; break;
                     case '2': case 'ArrowRight': siKeysPressed.right = true; break;
@@ -897,7 +927,7 @@
             }
         }
 
-        // ✅ MAPEO ACTUALIZADO: ArrowLeft→1, ArrowRight→2, Space→3
+        // ✅ MAPEO TECLADO PC
         document.addEventListener('keydown', (e) => {
             const keyMap = { 
                 'ArrowUp': '2', 'w': '2', 'W': '2', 
